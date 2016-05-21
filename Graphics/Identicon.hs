@@ -7,12 +7,11 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Flexible generation of identicons.
+-- Core types and definitions for flexible generation of identicons.
 
 {-# LANGUAGE DataKinds            #-}
 {-# LANGUAGE FlexibleContexts     #-}
 {-# LANGUAGE FlexibleInstances    #-}
-{-# LANGUAGE InstanceSigs         #-}
 {-# LANGUAGE KindSignatures       #-}
 {-# LANGUAGE PolyKinds            #-}
 {-# LANGUAGE ScopedTypeVariables  #-}
@@ -21,7 +20,19 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module Graphics.Identicon
-  (  )
+  ( -- * Basic types
+    Identicon (..)
+  , Consumer
+  , (:+) (..)
+  , Layer (..)
+  , BytesAvailable
+  , BytesConsumed
+  , Implementation
+  , ToLayer
+    -- * Identicon rendering
+  , Renderable (..)
+  , ApplyBytes (..)
+  , renderIdenticon )
 where
 
 import Codec.Picture
@@ -32,124 +43,153 @@ import Data.Word (Word8, Word16)
 import GHC.TypeLits
 import qualified Data.ByteString as B
 
-import Test.QuickCheck -- FIXME
+----------------------------------------------------------------------------
+-- Basic types
 
--- data Object (h :: Nat) (w :: Nat) (n :: Nat) -- = newtype?
-  -- Object { unObject :: ObjectFnc h w n }
+-- | 'Identicon' is a type that represents an identicon consisting of zero
+-- layers. The type is parametrized over the phantom type @n@ which is a
+-- natural number on type level that represents the number of bytes that
+-- should be provided to generate this type of identicon. Bytes typically
+-- come from some sort of hash that has fixed size.
+
+data Identicon (n :: Nat) = Identicon
+
+-- | 'Consumer' is a type represents an entity that consumes bytes that are
+-- available for identicon generation. It's parametrized over the phantom
+-- type @n@ which is a natural number on type level that represents the
+-- number of bytes that this entity consumes. At this moment, a 'Consumer'
+-- always adds one 'Layer' to identicon when attached to it. The number of
+-- bytes, specified as type parameter of 'Identicon' type must be completely
+-- consumed by a collection of consumers attached to it. To attach a
+-- consumer to 'Identicon', you use the '(:+)' type operator, see below.
+
+data Consumer (n :: Nat)
+
+-- | The '(:+)' type operator is used to attach 'Consumer's to 'Identicon'
+-- thus adding layers to it and exhausting bytes that are available for
+-- identicon generation. An example of identicon that can be generated from
+-- 16 byte hash is shown below:
+--
+-- > type Icon = Identicon 16 :+ Consumer 5 :+ Consumer 5 :+ Consumer 6
+--
+-- The identicon above has three layers.
 
 infixl 8 :+
 data a :+ b = a :+ b
 
-data Img (n :: Nat) = Img
+-- | 'Layer' is the basic building block of an identicon. It's a function
+-- that takes the following arguments (in order):
+--
+--     * Width of identicon
+--     * Height of identicon
+--     * Position of X axis
+--     * Position of Y axis
+--
+-- and returns a @PixelRGB8@ value. In this library, an identicon is
+-- generated via comination of several 'Layers'.
 
-data Obj (n :: Nat)
+newtype Layer = Layer
+  { unLayer :: Int -> Int -> Int -> Int -> PixelRGB8 }
 
-type family ObjectFnc (n :: Nat) :: k where
-  ObjectFnc 0 = Int -> Int -> Int -> Int -> PixelRGB8
-  ObjectFnc n = Word8 -> ObjectFnc (n - 1)
+-- | The 'BytesAvailable' type function returns how many bytes available for
+-- consumption in a given identicon.
 
-type family Impl a
+type family (BytesAvailable a) :: Nat where
+  BytesAvailable (Identicon n) = n
+  BytesAvailable (x :+ y)      = BytesAvailable x
 
-type instance Impl (Img n) = Img n
+-- | The 'BytesConsumed' type function returns how many bytes is consumed in
+-- a given identicon.
 
-type instance Impl (a :+ Obj n) = Impl a :+ ObjectFnc n
+type family BytesConsumed a :: Nat where
+  BytesConsumed (Identicon n) = 0
+  BytesConsumed (Consumer  n) = n
+  BytesConsumed (x :+ y)      = BytesConsumed x + BytesConsumed y
 
-class HasObjects a where
-  -- bgf ::
-  bgf :: Proxy a -> Impl a -> Int -> Int -> ByteString
-      -> (ByteString, Int -> Int -> PixelRGB8)
+-- | The 'Implementation' type function returns type that code which can
+-- implement the given identicon should have.
 
-instance HasObjects (Img n) where
-  bgf :: Proxy (Img n) -> Img n -> Int -> Int -> ByteString
-      -> (ByteString, Int -> Int -> PixelRGB8)
-  bgf _ _ _ _ bs = (bs, \_ _ -> PixelRGB8 0 0 0)
+type family Implementation a where
+  Implementation (Identicon n)     = Identicon n
+  Implementation (a :+ Consumer n) = Implementation a :+ ToLayer n
 
-instance (HasObjects a, ApplyWords (ObjectFnc n)) => HasObjects (a :+ Obj n) where
-  bgf :: Proxy (a :+ Obj n) -> Impl (a :+ Obj n) -> Int -> Int -> ByteString
-      -> (ByteString, Int -> Int -> PixelRGB8)
-  bgf _ (a :+ b) weight height bs0 =
-    let (bs1, x) = bgf (Proxy :: Proxy a) a weight height bs0
+-- | The 'ToLayer' type function calculates type that layer-producing
+-- function should have to consume given number of bytes @n@.
+
+type family ToLayer (n :: Nat) :: k where
+  ToLayer 0 = Layer
+  ToLayer n = Word8 -> ToLayer (n - 1)
+
+----------------------------------------------------------------------------
+-- Identicon rendering
+
+-- | Identicons that can be rendered as an image implement this class.
+
+class Renderable a where
+  render
+    :: Proxy a         -- ^ A 'Proxy' clarifying identicon type
+    -> Implementation a -- ^ Corresponding implementation
+    -> Int             -- ^ Width in pixels
+    -> Int             -- ^ Height in pixels
+    -> ByteString      -- ^ Bytes to consume
+    -> (ByteString, Int -> Int -> PixelRGB8)
+       -- ^ The rest of bytes and producing function
+
+instance Renderable (Identicon n) where
+  render _ _ _ _ bs = (bs, \_ _ -> PixelRGB8 0 0 0)
+
+instance (Renderable a, ApplyBytes (ToLayer n))
+    => Renderable (a :+ Consumer n) where
+  render _ (a :+ b) weight height bs0 =
+    let (bs1, x) = render (Proxy :: Proxy a) a weight height bs0
         (bs2, y) = applyWords b bs1
-    in (bs2, mixPixels x (y weight height)) -- should be more flexible
+    in (bs2, mixPixels x (unLayer y weight height))
 
 mixPixels
   :: (Int -> Int -> PixelRGB8)
   -> (Int -> Int -> PixelRGB8)
   ->  Int -> Int -> PixelRGB8
-mixPixels a b x y = PixelRGB8 (s ar br) (s ag bg) (s ab bb)
-  where
-    (PixelRGB8 ar ag ab) = a x y
-    (PixelRGB8 br bg bb) = b x y
-    s i j = fromIntegral $ min 255 (fromIntegral i + fromIntegral j :: Word16)
+mixPixels a b x y = mixWith (const saturatedAddition) (a x y) (b x y)
+{-# INLINE mixPixels #-}
 
-class ApplyWords a where
-  applyWords :: a -> ByteString -> (ByteString, Int -> Int -> Int -> Int -> PixelRGB8)
+saturatedAddition :: Word8 -> Word8 -> Word8 -- Additive coloring
+saturatedAddition x y =
+  fromIntegral $ min 0xff (fromIntegral x + fromIntegral y :: Word16)
+{-# INLINE saturatedAddition #-}
 
-instance ApplyWords (Int -> Int -> Int -> Int -> PixelRGB8) where
+-- | Consume bytes from strict 'ByteString' and apply them to a function
+-- that takes 'Word8' until it produces a 'Layer'.
+
+class ApplyBytes a where
+  applyWords
+    :: a               -- ^ Function that produces a layer
+    -> ByteString      -- ^ Bytes to consume (in a 'ByteString')
+    -> (ByteString, Layer) -- ^ The rest of 'ByteString' and produced 'Layer'
+
+instance ApplyBytes Layer where
   applyWords f bs = (bs, f)
 
-instance ApplyWords f => ApplyWords (Word8 -> f) where
+instance ApplyBytes f => ApplyBytes (Word8 -> f) where
   applyWords f bs =
     let (b,bs') = fromJust (B.uncons bs)
     in applyWords (f b) bs'
 
--- instance HasObjects (a :+ b) where
---   rere :: Proxy (a :+ b) -> ByteString -> Int -> Int -> Image PixelRGB8
+-- | Render an identicon.
 
-type family HasSlots a :: Nat where
-  HasSlots (Img n) = n
-  HasSlots (x :+ y) = HasSlots x
-
-type family SlotsOccupied a :: Nat where
-  SlotsOccupied (Img n) = 0
-  SlotsOccupied (Obj n) = n
-  SlotsOccupied (x :+ y) = SlotsOccupied x + SlotsOccupied y
-
-generateIdenticon
-  :: forall a. ( HasObjects a
-     , KnownNat (HasSlots a)
-     , KnownNat (SlotsOccupied a)
-     , HasSlots a ~ SlotsOccupied a )
-  => Proxy a
-  -> Impl a
-  -> Int -- width
-  -> Int -- height
-  -> ByteString
+renderIdenticon :: forall a.
+  ( Renderable a
+  , KnownNat (BytesAvailable a)
+  , KnownNat (BytesConsumed a)
+  , BytesAvailable a ~ BytesConsumed a )
+  => Proxy a           -- ^ Type that defines an identicon
+  -> Implementation a  -- ^ Implementation that generates layers
+  -> Int               -- ^ Width in pixels
+  -> Int               -- ^ Height in pixels
+  -> ByteString        -- ^ Collection of bytes to use, should be long enough
   -> Maybe (Image PixelRGB8)
-generateIdenticon proxy impl width height bs =
-  if B.length bs < fromIntegral (natVal (Proxy :: Proxy (HasSlots a)))
+     -- ^ Rendered identicon, or 'Nothing' if there is not enough bytes
+renderIdenticon proxy impl width height bs =
+  if B.length bs < fromIntegral (natVal (Proxy :: Proxy (BytesAvailable a)))
     then Nothing
-    else Just $ generateImage (snd $ bgf proxy impl width height bs) width height
-
-----------------------------------------------------------------------------
--- Playground
-
-myImageType :: Proxy (Img 5 :+ Obj 3 :+ Obj 1 :+ Obj 1)
-myImageType = Proxy
-
-myImplType = Img :+ a :+ b :+ c
-  where
-    a :: Word8 -> Word8 -> Word8 -> Int -> Int -> Int -> Int -> PixelRGB8
-    a w0 w1 w2 height width x y =
-      if (((x - width `div` 2) ^ 2) +
-         ((y - height `div` 2) ^ 2)) <= (fromIntegral w0 + fromIntegral w1)
-        then PixelRGB8 w0 w1 w2
-        else PixelRGB8 0 0 0
-    b :: Word8 -> Int -> Int -> Int -> Int -> PixelRGB8
-    b w0 height weight x y =
-      if x > fromIntegral w0 then PixelRGB8 0 0x60 0 else PixelRGB8 0 0 w0
-    c :: Word8 -> Int -> Int -> Int -> Int -> PixelRGB8
-    c w0 height weight x y =
-       if (x > weight `div` 2) && (y > height `div` 2)
-         then PixelRGB8 0 w0 0
-         else PixelRGB8 0 0 (fromIntegral x)
-
-myGener :: ByteString -> Maybe (Image PixelRGB8)
-myGener = generateIdenticon myImageType myImplType 120 120
-
-rere :: IO ()
-rere = do
-  bs <- B.pack <$> generate (vector 5)
-  case myGener bs of
-    Nothing -> putStrLn "That doesn't work!"
-    Just img -> savePngImage "indenticon.png" (ImageRGB8 img)
+    else Just $ generateImage
+         (snd $ render proxy impl width height bs) width height

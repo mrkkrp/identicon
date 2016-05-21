@@ -60,7 +60,6 @@ library
                     , JuicyPixels      >= 3.2.6.5
                     , bytestring       >= 0.10.6
                     , vector           >= 0.11
-                    , QuickCheck
   exposed-modules:    Graphics.Identicon
   if flag(dev)
     ghc-options:      -Wall -Werror

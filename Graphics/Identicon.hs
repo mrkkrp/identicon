@@ -145,6 +145,8 @@ instance (Renderable a, ApplyBytes (ToLayer n))
         (bs2, y) = applyWords b bs1
     in (bs2, mixPixels x (unLayer y weight height))
 
+-- | Combine results of two rending functions.
+
 mixPixels
   :: (Int -> Int -> PixelRGB8)
   -> (Int -> Int -> PixelRGB8)
@@ -152,9 +154,12 @@ mixPixels
 mixPixels a b x y = mixWith (const saturatedAddition) (a x y) (b x y)
 {-# INLINE mixPixels #-}
 
-saturatedAddition :: Word8 -> Word8 -> Word8 -- Additive coloring
-saturatedAddition x y =
-  fromIntegral $ min 0xff (fromIntegral x + fromIntegral y :: Word16)
+-- | An implementation of saturated addition for bytes. This is a reasonably
+-- efficient thing.
+
+saturatedAddition :: Word8 -> Word8 -> Word8
+saturatedAddition x y = fromIntegral $
+  (0xff :: Word16) `min` (fromIntegral x + fromIntegral y)
 {-# INLINE saturatedAddition #-}
 
 -- | Consume bytes from strict 'ByteString' and apply them to a function
@@ -177,10 +182,9 @@ instance ApplyBytes f => ApplyBytes (Word8 -> f) where
 -- | Render an identicon.
 
 renderIdenticon :: forall a.
-  ( Renderable a
-  , KnownNat (BytesAvailable a)
-  , KnownNat (BytesConsumed a)
-  , BytesAvailable a ~ BytesConsumed a )
+     ( Renderable a
+     , KnownNat (BytesAvailable a)
+     , BytesAvailable a ~ BytesConsumed a )
   => Proxy a           -- ^ Type that defines an identicon
   -> Implementation a  -- ^ Implementation that generates layers
   -> Int               -- ^ Width in pixels

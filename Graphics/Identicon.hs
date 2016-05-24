@@ -179,7 +179,8 @@ instance ApplyBytes f => ApplyBytes (Word8 -> f) where
     let (b,bs') = fromJust (B.uncons bs)
     in applyWords (f b) bs'
 
--- | Render an identicon.
+-- | Render an identicon. The function returns 'Nothing' if given
+-- 'ByteString' is too short or when width or height is lesser than 1.
 
 renderIdenticon :: forall a.
      ( Renderable a
@@ -194,6 +195,8 @@ renderIdenticon :: forall a.
      -- ^ Rendered identicon, or 'Nothing' if there is not enough bytes
 renderIdenticon proxy impl width height bs =
   if B.length bs < fromIntegral (natVal (Proxy :: Proxy (BytesAvailable a)))
+     || width  < 1
+     || height < 1
     then Nothing
     else Just $ generateImage
          (snd $ render proxy impl width height bs) width height

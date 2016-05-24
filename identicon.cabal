@@ -39,7 +39,7 @@ author:               Mark Karpov <markkarpov@openmailbox.org>
 maintainer:           Mark Karpov <markkarpov@openmailbox.org>
 homepage:             https://github.com/mrkkrp/identicon
 bug-reports:          https://github.com/mrkkrp/identicon/issues
-category:             Categories
+category:             Graphics, Image
 synopsis:             Flexible generation of identicons
 build-type:           Simple
 description:          Flexible generation of identicons.

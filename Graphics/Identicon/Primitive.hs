@@ -142,16 +142,16 @@ circle l = Layer $ \w h x y ->
 
 hsym :: Layer -> Layer
 hsym l = Layer $ \w h x y ->
-  let h' = h `quot` 2
-  in unLayer l w h' x (if y > h' then h - y else y)
+  let w' = w `quot` 2
+  in unLayer l w' h (if x > w' then w - x else x) y
 {-# INLINE hsym #-}
 
 -- | Add vertical symmetry to a layer.
 
 vsym :: Layer -> Layer
 vsym l = Layer $ \w h x y ->
-  let w' = w `quot` 2
-  in unLayer l w' h (if x > w' then w - x else x) y
+  let h' = h `quot` 2
+  in unLayer l w h' x (if y > h' then h - y else y)
 {-# INLINE vsym #-}
 
 -- | Add horizontal and vertical symmetry to layer. Result is an image with

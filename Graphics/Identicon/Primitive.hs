@@ -125,11 +125,11 @@ circle l = Layer $ \w h x y ->
       v = sqr (fromIntegral x - w' / 2) + sqr (fromIntegral y - h' / 2)
       r0 = min w' h' / 2
       r1 = sqr r0
-      β = 0.99
-      δ = (r1 - v) / (r1 * (1 - β))
+      β = 2.0 * r0
+      δ = (r1 - v) / β
       τ = floor . (* δ) . fromIntegral
       ~px@(PixelRGB8 r g b) = unLayer l w h x y
-      e | v <  r1 * β = px
+      e | v <  r1 - β = px
         | v <= r1     = PixelRGB8 (τ r) (τ g) (τ b)
         | otherwise   = black
   in e

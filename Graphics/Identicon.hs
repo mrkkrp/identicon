@@ -7,7 +7,38 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Core types and definitions for flexible generation of identicons.
+-- Core types and definitions for flexible generation of identicons. Please
+-- see the "Graphics.Identicon.Primitive" module for collection of building
+-- blocks to code layers of your identicon.
+--
+-- A basic complete example looks like this:
+--
+-- > import Codec.Picture
+-- > import Data.ByteString (ByteString)
+-- > import Data.Proxy
+-- > import Data.Word (Word8)
+-- > import Graphics.Identicon
+-- > import Graphics.Identicon.Primitive
+-- >
+-- > myImageType :: Proxy (Identicon 4 :+ Consumer 4)
+-- > myImageType = Proxy
+-- >
+-- > myImpl = Identicon :+ a
+-- >   where
+-- >     a :: Word8 -> Word8 -> Word8 -> Word8 -> Layer
+-- >     a r g b n = rsym $ onGrid 6 6 (fromIntegral n) $
+-- >       circle $ gradientLR (edge . mid) black (PixelRGB8 r g b)
+-- >
+-- > myGenerator :: Int -> Int -> ByteString -> Maybe (Image PixelRGB8)
+-- > myGenerator = renderIdenticon myImageType myImpl
+-- >
+-- @myGenerator@ takes desired width, height, and hash that should have at
+-- least 4 bytes in it and returns an identicon corresponding to that hash
+-- or 'Nothing' if the hash has less than 4 bytes in it or width or height
+-- don't make sense. The identicon has randomly placed circle with gradient
+-- filling changing (horizontally) from black to some color and back to
+-- black. The circle is mirrored 4 times, and every repetition is rotated by
+-- 90°. This identicon consumes 4 bytes and has one layer.
 
 {-# LANGUAGE DataKinds            #-}
 {-# LANGUAGE FlexibleContexts     #-}
@@ -54,18 +85,19 @@ import qualified Data.ByteString as B
 
 data Identicon (n :: Nat) = Identicon
 
--- | 'Consumer' is a type represents an entity that consumes bytes that are
--- available for identicon generation. It's parametrized over the phantom
--- type @n@ which is a natural number on type level that represents the
--- number of bytes that this entity consumes. At this moment, a 'Consumer'
--- always adds one 'Layer' to identicon when attached to it. The number of
--- bytes, specified as type parameter of 'Identicon' type must be completely
--- consumed by a collection of consumers attached to it. To attach a
--- consumer to 'Identicon', you use the '(:+)' type operator, see below.
+-- | 'Consumer' is a type that represents an entity that consumes bytes that
+-- are available for identicon generation. It's parametrized over the
+-- phantom type @n@ which is a natural number on type level that represents
+-- the number of bytes that this entity consumes. At this moment, a
+-- 'Consumer' always adds one 'Layer' to identicon when attached to it. The
+-- number of bytes, specified as type parameter of 'Identicon' type must be
+-- completely consumed by a collection of consumers attached to it. To
+-- attach a consumer to 'Identicon', you use the ':+' type operator, see
+-- below.
 
 data Consumer (n :: Nat)
 
--- | The '(:+)' type operator is used to attach 'Consumer's to 'Identicon'
+-- | The ':+' type operator is used to attach 'Consumer's to 'Identicon',
 -- thus adding layers to it and exhausting bytes that are available for
 -- identicon generation. An example of identicon that can be generated from
 -- 16 byte hash is shown below:
@@ -82,32 +114,32 @@ data a :+ b = a :+ b
 --
 --     * Width of identicon
 --     * Height of identicon
---     * Position of X axis
---     * Position of Y axis
+--     * Position on X axis
+--     * Position on Y axis
 --
--- and returns a @PixelRGB8@ value. In this library, an identicon is
--- generated via comination of several 'Layers'.
+-- …and returns a 'PixelRGB8' value. In this library, an identicon is
+-- generated as “superposition” of several 'Layers'.
 
 newtype Layer = Layer
   { unLayer :: Int -> Int -> Int -> Int -> PixelRGB8 }
 
--- | The 'BytesAvailable' type function returns how many bytes available for
--- consumption in a given identicon.
+-- | The 'BytesAvailable' type function calculates how many bytes available
+-- for consumption in a given identicon.
 
-type family (BytesAvailable a) :: Nat where
+type family BytesAvailable a :: Nat where
   BytesAvailable (Identicon n) = n
   BytesAvailable (x :+ y)      = BytesAvailable x
 
--- | The 'BytesConsumed' type function returns how many bytes is consumed in
--- a given identicon.
+-- | The 'BytesConsumed' type function calculates how many bytes is consumed
+-- in a given identicon.
 
 type family BytesConsumed a :: Nat where
   BytesConsumed (Identicon n) = 0
   BytesConsumed (Consumer  n) = n
   BytesConsumed (x :+ y)      = BytesConsumed x + BytesConsumed y
 
--- | The 'Implementation' type function returns type that code which can
--- implement the given identicon should have.
+-- | The 'Implementation' type function returns type of the code which can
+-- implement the given identicon.
 
 type family Implementation a where
   Implementation (Identicon n)     = Identicon n
@@ -168,7 +200,7 @@ saturatedAddition x y = fromIntegral $
 class ApplyBytes a where
   applyWords
     :: a               -- ^ Function that produces a layer
-    -> ByteString      -- ^ Bytes to consume (in a 'ByteString')
+    -> ByteString      -- ^ Bytes to consume
     -> (ByteString, Layer) -- ^ The rest of 'ByteString' and produced 'Layer'
 
 instance ApplyBytes Layer where

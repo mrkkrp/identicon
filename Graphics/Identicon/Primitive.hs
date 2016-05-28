@@ -32,6 +32,7 @@ module Graphics.Identicon.Primitive
   , hsym
   , vsym
   , hvsym
+  , rsym
     -- * Other
   , oneof )
 where
@@ -164,6 +165,20 @@ hvsym l = Layer $ \w h x y ->
   in unLayer l w' h' (if x > w' then w - x else x)
                      (if y > h' then h - y else y)
 {-# INLINE hvsym #-}
+
+-- | Just like 'hvsym', but every repetition is rotated by 90°. Only works
+-- with square layers because for speed it just swaps coordinates.
+
+rsym :: Layer -> Layer
+rsym l = Layer $ \w h x y ->
+  let h' = h `quot` 2
+      w' = w `quot` 2
+      α  = x > w'
+      β  = y > h'
+  in unLayer l w' h'
+     (if α then (if β then w - x else y) else (if β then h - y else x))
+     (if β then (if α then h - y else x) else (if α then w - x else y))
+{-# INLINE rsym #-}
 
 ----------------------------------------------------------------------------
 -- Other

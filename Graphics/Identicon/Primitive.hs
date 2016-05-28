@@ -177,14 +177,14 @@ edge x = x * x
 -- The index @n@ can be greater than maximal index, in this case reminder of
 -- division of @n@ by @w * h@ is used.
 
-onGrid
-  :: Int               -- ^ Number of horizontal positions
+onGrid :: Integral a
+  => Int               -- ^ Number of horizontal positions
   -> Int               -- ^ Number of vertical positions
-  -> Int               -- ^ Index of this cell
+  -> a                 -- ^ Index of this cell
   -> Layer             -- ^ Layer to insert
   -> Layer             -- ^ Resulting layer
 onGrid α β n' l = Layer $ \w h x y ->
-  let n = n' `rem` (α * β)
+  let n = fromIntegral n' `rem` (α * β)
       (y', x') = n `quotRem` α
       xu, yu :: Float
       xu = fromIntegral w / fromIntegral α
@@ -195,7 +195,7 @@ onGrid α β n' l = Layer $ \w h x y ->
       yB = floor (fromIntegral (y' + 1) * yu)
   in if x < xA || x >= xB || y < yA || y >= yB
        then black
-       else unLayer l (xB - xA) (yB - yA) (x - xA) (y - yA) -- FIXME gaps
+       else unLayer l (xB - xA) (yB - yA) (x - xA) (y - yA)
 {-# INLINE onGrid #-}
 
 -- | Limit given layer so it forms a circle.

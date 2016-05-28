@@ -26,7 +26,7 @@
 -- > myImpl = Identicon :+ a
 -- >   where
 -- >     a :: Word8 -> Word8 -> Word8 -> Word8 -> Layer
--- >     a r g b n = rsym $ onGrid 6 6 (fromIntegral n) $
+-- >     a r g b n = rsym $ onGrid 6 6 n $
 -- >       circle $ gradientLR (edge . mid) black (PixelRGB8 r g b)
 -- >
 -- > myGenerator :: Int -> Int -> ByteString -> Maybe (Image PixelRGB8)

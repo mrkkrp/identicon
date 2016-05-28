@@ -7,12 +7,87 @@
 [![Build Status](https://travis-ci.org/mrkkrp/identicon.svg?branch=master)](https://travis-ci.org/mrkkrp/identicon)
 [![Coverage Status](https://coveralls.io/repos/mrkkrp/identicon/badge.svg?branch=master&service=github)](https://coveralls.io/github/mrkkrp/identicon?branch=master)
 
-The package implements flexible generation of identicons using
-[Jucy Pixels](https://hackage.haskell.org/package/JuicyPixels).
+The package implements flexible generation of identicons using the
+[Juicy Pixels](https://hackage.haskell.org/package/JuicyPixels) package.
+It's reasonably fast for my taste, and since identicons are usually not
+bigger than 420 × 420 pixels, I think that sequential generation that
+JuicyPixels supports fits the task very well.
 
 ## Quick start
 
-*Coming soon…*
+To use the package you usually need the following set of imports (and a
+couple of language extensions for type level magic):
+
+```haskell
+{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE TypeOperators #-}
+
+import Codec.Picture -- JuicyPixels
+import Data.ByteString (ByteString) -- we use strict byte strings
+import Data.Proxy
+import Data.Word (Word8)
+import Graphics.Identicon -- core definitions
+import Graphics.Identicon.Primitive -- some visual primitives
+```
+
+You first write a type that has information about total number of bytes your
+identicon consumes and number of distinct visual components it has (it's
+called “layers” in terminology of the package):
+
+```haskell
+type MyIcon = Identicon 12 :+ Consumer 4 :+ Consumer 4 :+ Consumer 4
+```
+
+Here we have an identicon that needs 12 bytes to be generated. It has three
+consumers that take 4 bytes each and generate layers, i.e. visual objects
+(circles, squares, etc.).
+
+The second step is to write implementation of every layer. We can use
+primitives available out-of-box, they live in the
+`Graphics.Identicon.Primitive` module:
+
+```
+myImpl = Identicon :+ a :+ a :+ a
+  where
+    a :: Word8 -> Word8 -> Word8 -> Word8 -> Layer
+    a r g b n = rsym $ onGrid 3 3 n $
+      gradientXY (edge . mid) black (PixelRGB8 r g b)
+```
+
+We could choose to code every layer differently, but since position and
+color of every layer are unlikely to be the same, this approach will work
+well too.
+
+Every byte is available to layer-generating function as a distinct `Word8`
+argument. The type system makes sure that:
+
+* you consume exactly as many bytes as you promised in type of your
+  identicon;
+
+* you have as many layers as you described in type of your identicon;
+
+* every function in your implementation has correct signature (i.e. it grabs
+  as many `Word8`s as promised and produces a `Layer` in the end).
+
+Mixing of layers and generation is handled by the library like this:
+
+```haskell
+-- | Here is the function that generates your identicons. It's usually
+-- convenient to wrap the 'renderIdenticon' function that comes with the
+-- library.
+
+genMyIdenticon
+  :: Int               -- ^ Identicon width
+  -> Int               -- ^ Identicon height
+  -> ByteString        -- ^ Input (some sort of hash or something)
+  -> Maybe (Image PixelRGB8)
+     -- ^ Identicon, unless 'ByteString' is too short
+genMyIdenticon = renderIdenticon (Proxy :: Proxy MyIcon) myImpl
+```
+
+For more information head straight to Haddocks. BTW, I have written
+[a blog post](https://mrkkrp.github.io/posts/the-identicon-package.html)
+about the package where I demonstrate some pictures generated with it.
 
 ## License
 

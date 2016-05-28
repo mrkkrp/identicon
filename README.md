@@ -46,7 +46,8 @@ The second step is to write implementation of every layer. We can use
 primitives available out-of-box, they live in the
 `Graphics.Identicon.Primitive` module:
 
-```
+```haskell
+myImpl :: Implementation MyIcon
 myImpl = Identicon :+ a :+ a :+ a
   where
     a :: Word8 -> Word8 -> Word8 -> Word8 -> Layer

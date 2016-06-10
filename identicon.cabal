@@ -65,9 +65,9 @@ flag dev
   default:            False
 
 library
-  build-depends:      base             >= 4.7 && < 5
-                    , JuicyPixels      >= 3.2.6.5
-                    , bytestring       >= 0.10.6
+  build-depends:      base             >= 4.7     && < 5.0
+                    , JuicyPixels      >= 3.2.6.5 && < 4.0
+                    , bytestring       >= 0.10.6  && < 0.13
   exposed-modules:    Graphics.Identicon
                     , Graphics.Identicon.Primitive
   if flag(dev)
@@ -80,10 +80,10 @@ test-suite tests
   main-is:            Spec.hs
   hs-source-dirs:     tests
   type:               exitcode-stdio-1.0
-  build-depends:      base             >= 4.7 && < 5
-                    , JuicyPixels      >= 3.2.6.5
-                    , bytestring       >= 0.10.6
-                    , hspec            >= 2.0
+  build-depends:      base             >= 4.7     && < 5.0
+                    , JuicyPixels      >= 3.2.6.5 && < 4.0
+                    , bytestring       >= 0.10.6  && < 0.13
+                    , hspec            >= 2.0     && < 3.0
                     , identicon        >= 0.1.0
   if flag(dev)
     ghc-options:      -Wall -Werror

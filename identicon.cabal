@@ -43,17 +43,9 @@ category:             Graphics, Image
 synopsis:             Flexible generation of identicons
 build-type:           Simple
 description:          Flexible generation of identicons.
-extra-source-files:   CHANGELOG.md
+extra-doc-files:      CHANGELOG.md
                     , README.md
-                    , data-examples/identicon-00.png
-                    , data-examples/identicon-01.png
-                    , data-examples/identicon-02.png
-                    , data-examples/identicon-10.png
-                    , data-examples/identicon-11.png
-                    , data-examples/identicon-12.png
-                    , data-examples/identicon-20.png
-                    , data-examples/identicon-21.png
-                    , data-examples/identicon-22.png
+data-files:           data-examples/*.png
 
 source-repository head
   type:               git

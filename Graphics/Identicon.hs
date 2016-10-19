@@ -232,3 +232,4 @@ renderIdenticon proxy impl width height bs =
     then Nothing
     else Just $ generateImage
          (snd $ render proxy impl width height bs) width height
+{-# NOINLINE renderIdenticon #-}

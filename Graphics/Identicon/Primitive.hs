@@ -270,3 +270,4 @@ rsym l = Layer $ \w h x y ->
 
 oneof :: Integral n => [a] -> n -> a
 oneof xs n = xs !! (fromIntegral n `rem` length xs)
+{-# INLINE oneof #-}

@@ -70,7 +70,7 @@ import Codec.Picture
 import Data.ByteString (ByteString)
 import Data.Maybe (fromJust)
 import Data.Proxy
-import Data.Word (Word8, Word16)
+import Data.Word (Word8)
 import GHC.TypeLits
 import qualified Data.ByteString as B
 
@@ -190,8 +190,8 @@ mixPixels a b x y = mixWith (const saturatedAddition) (a x y) (b x y)
 -- efficient thing.
 
 saturatedAddition :: Word8 -> Word8 -> Word8
-saturatedAddition x y = fromIntegral $
-  (0xff :: Word16) `min` (fromIntegral x + fromIntegral y)
+saturatedAddition x y = let z = x + y in
+  if z < x then 0xff else z
 {-# INLINE saturatedAddition #-}
 
 -- | Consume bytes from strict 'ByteString' and apply them to a function

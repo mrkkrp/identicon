@@ -38,7 +38,7 @@ module Main (main) where
 
 import Codec.Picture
 import Control.Monad
-import Data.ByteString
+import Data.ByteString (ByteString)
 import Data.Function (on)
 import Data.Proxy
 import Data.Word (Word8)

@@ -2,6 +2,10 @@
 
 * Added benchmarks.
 
+* Renamed `applyWords` to `applyBytes` (method of type class `ApplyBytes`).
+  It's unlikely that anyone uses it though as it's more of internal
+  machinery.
+
 ## Identicon 0.1.0
 
 * Initial release.

@@ -174,7 +174,7 @@ instance (Renderable a, ApplyBytes (ToLayer n))
     => Renderable (a :+ Consumer n) where
   render _ (a :+ b) weight height bs0 =
     let (bs1, x) = render (Proxy :: Proxy a) a weight height bs0
-        (bs2, y) = applyWords b bs1
+        (bs2, y) = applyBytes b bs1
     in (bs2, mixPixels x (unLayer y weight height))
 
 -- | Combine results of two rending functions.
@@ -198,18 +198,18 @@ saturatedAddition x y = let z = x + y in
 -- that takes 'Word8' until it produces a 'Layer'.
 
 class ApplyBytes a where
-  applyWords
+  applyBytes
     :: a               -- ^ Function that produces a layer
     -> ByteString      -- ^ Bytes to consume
     -> (ByteString, Layer) -- ^ The rest of 'ByteString' and produced 'Layer'
 
 instance ApplyBytes Layer where
-  applyWords f bs = (bs, f)
+  applyBytes f bs = (bs, f)
 
 instance ApplyBytes f => ApplyBytes (Word8 -> f) where
-  applyWords f bs =
+  applyBytes f bs =
     let (b,bs') = fromJust (B.uncons bs)
-    in applyWords (f b) bs'
+    in applyBytes (f b) bs'
 
 -- | Render an identicon. The function returns 'Nothing' if given
 -- 'ByteString' is too short or when width or height is lesser than 1.

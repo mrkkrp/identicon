@@ -31,7 +31,7 @@
 -- POSSIBILITY OF SUCH DAMAGE.
 
 name:                 identicon
-version:              0.1.0
+version:              0.2.0
 cabal-version:        >= 1.10
 license:              BSD3
 license-file:         LICENSE.md
@@ -76,7 +76,7 @@ test-suite tests
                     , JuicyPixels      >= 3.2.6.5 && < 4.0
                     , bytestring       >= 0.10.6  && < 0.13
                     , hspec            >= 2.0     && < 3.0
-                    , identicon        >= 0.1.0
+                    , identicon        >= 0.2.0
   if flag(dev)
     ghc-options:      -Wall -Werror
   else
@@ -91,7 +91,7 @@ benchmark bench
                     , JuicyPixels      >= 3.2.6.5 && < 4.0
                     , bytestring       >= 0.10.6  && < 0.13
                     , criterion        >= 0.6.2.1 && < 1.2
-                    , identicon        >= 0.1.0
+                    , identicon        >= 0.2.0
                     , random           >= 1.1     && < 1.2
                     , tf-random        >= 0.4     && < 0.6
   if flag(dev)

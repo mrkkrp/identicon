@@ -92,6 +92,6 @@ about the package where I demonstrate some pictures generated with it.
 
 ## License
 
-Copyright © 2016 Mark Karpov
+Copyright © 2016–2017 Mark Karpov
 
 Distributed under BSD 3 clause license.

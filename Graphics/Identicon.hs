@@ -49,6 +49,7 @@
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE TypeOperators        #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE CPP #-}
 
 module Graphics.Identicon
   ( -- * Basic types
@@ -73,6 +74,9 @@ import Data.Proxy
 import Data.Word (Word8)
 import GHC.TypeLits
 import qualified Data.ByteString as B
+#if !MIN_VERSION_base(4,8,0)
+import Data.Monoid
+#endif
 
 ----------------------------------------------------------------------------
 -- Basic types
@@ -122,6 +126,10 @@ data a :+ b = a :+ b
 
 newtype Layer = Layer
   { unLayer :: Int -> Int -> Int -> Int -> PixelRGB8 }
+
+instance Monoid Layer where
+  mempty = Layer $ \_ _ _ _ -> PixelRGB8 0 0 0
+  mappend (Layer a) (Layer b) = Layer (\w h -> mixPixels (a w h) (b w h))
 
 -- | The 'BytesAvailable' type function calculates how many bytes available
 -- for consumption in a given identicon.

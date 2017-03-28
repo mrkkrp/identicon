@@ -1,3 +1,7 @@
+## Identicon 0.2.1
+
+* Added `Semigroup` and `Monoid` instances for `Layer`.
+
 ## Identicon 0.2.0
 
 * Added benchmarks.

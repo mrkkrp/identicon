@@ -71,10 +71,10 @@ import Codec.Picture
 import Data.ByteString (ByteString)
 import Data.Maybe (fromJust)
 import Data.Proxy
-import Data.Semigroup
 import Data.Word (Word8)
 import GHC.TypeLits
 import qualified Data.ByteString as B
+import qualified Data.Semigroup  as S
 
 #if !MIN_VERSION_base(4,8,0)
 import Data.Monoid
@@ -129,12 +129,12 @@ data a :+ b = a :+ b
 newtype Layer = Layer
   { unLayer :: Int -> Int -> Int -> Int -> PixelRGB8 }
 
-instance Semigroup Layer where
+instance S.Semigroup Layer where
   Layer a <> Layer b = Layer (\w h -> mixPixels (a w h) (b w h))
 
 instance Monoid Layer where
   mempty  = Layer $ \_ _ _ _ -> PixelRGB8 0 0 0
-  mappend = (<>)
+  mappend = (S.<>)
 
 -- | The 'BytesAvailable' type function calculates how many bytes available
 -- for consumption in a given identicon.

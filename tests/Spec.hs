@@ -30,6 +30,7 @@
 -- ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 -- POSSIBILITY OF SUCH DAMAGE.
 
+{-# LANGUAGE CPP               #-}
 {-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators     #-}
@@ -47,6 +48,10 @@ import Graphics.Identicon.Primitive
 import Test.Hspec
 import Test.QuickCheck hiding (oneof)
 import qualified Data.ByteString as B
+
+#if !MIN_VERSION_base(4,8,0)
+import Data.Monoid
+#endif
 
 main :: IO ()
 main = hspec spec

@@ -40,6 +40,7 @@
 -- black. The circle is mirrored 4 times, and every repetition is rotated by
 -- 90°. This identicon consumes 4 bytes and has one layer.
 
+{-# LANGUAGE CPP                  #-}
 {-# LANGUAGE DataKinds            #-}
 {-# LANGUAGE FlexibleContexts     #-}
 {-# LANGUAGE FlexibleInstances    #-}
@@ -49,7 +50,6 @@
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE TypeOperators        #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE CPP #-}
 
 module Graphics.Identicon
   ( -- * Basic types
@@ -71,9 +71,11 @@ import Codec.Picture
 import Data.ByteString (ByteString)
 import Data.Maybe (fromJust)
 import Data.Proxy
+import Data.Semigroup
 import Data.Word (Word8)
 import GHC.TypeLits
 import qualified Data.ByteString as B
+
 #if !MIN_VERSION_base(4,8,0)
 import Data.Monoid
 #endif
@@ -127,9 +129,12 @@ data a :+ b = a :+ b
 newtype Layer = Layer
   { unLayer :: Int -> Int -> Int -> Int -> PixelRGB8 }
 
+instance Semigroup Layer where
+  Layer a <> Layer b = Layer (\w h -> mixPixels (a w h) (b w h))
+
 instance Monoid Layer where
-  mempty = Layer $ \_ _ _ _ -> PixelRGB8 0 0 0
-  mappend (Layer a) (Layer b) = Layer (\w h -> mixPixels (a w h) (b w h))
+  mempty  = Layer $ \_ _ _ _ -> PixelRGB8 0 0 0
+  mappend = (<>)
 
 -- | The 'BytesAvailable' type function calculates how many bytes available
 -- for consumption in a given identicon.

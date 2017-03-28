@@ -45,6 +45,7 @@ import Data.Word (Word8)
 import Graphics.Identicon
 import Graphics.Identicon.Primitive
 import Test.Hspec
+import Test.QuickCheck hiding (oneof)
 import qualified Data.ByteString as B
 
 main :: IO ()
@@ -68,6 +69,26 @@ spec = do
     "data-examples/identicon-21.png"
   ω gen2 [0xf9,0x9b,0xb7,0x11,0x5b,0xca,0x00]
     "data-examples/identicon-22.png"
+  describe "Semigroup and Monoid instances of Layer" $ do
+    it "mempty always returns black pixel" $
+      property $ \w h x y ->
+        let (Layer f) = mempty
+        in f w h x y `shouldBe` PixelRGB8 0 0 0
+    it "mappend combines layers" $
+      property $ \w'' h'' x'' y'' ->
+        let w = w'' `mod` 10
+            h = h'' `mod` 10
+            x = x'' `mod` 10
+            y = y'' `mod` 10
+            (Layer f) = Layer a `mappend` Layer b
+            a w' h' x' y' = PixelRGB8 (g $ w' + h') (g $ h' + x') (g $ x' + y')
+            b w' h' x' y' = PixelRGB8 (g $ w' + y') (g $ h' + w') (g $ x' + w')
+            g = fromIntegral
+        in f w h x y
+           `shouldBe` PixelRGB8
+           (g $ w + h + w + y)
+           (g $ h + x + h + w)
+           (g $ x + y + x + w)
 
 renderIdenticonSpec :: Spec
 renderIdenticonSpec = do

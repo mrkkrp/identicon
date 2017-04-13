@@ -8,8 +8,8 @@
 -- Portability :  portable
 --
 -- Core types and definitions for flexible generation of identicons. Please
--- see the "Graphics.Identicon.Primitive" module for collection of building
--- blocks to code layers of your identicon.
+-- see the "Graphics.Identicon.Primitive" module for a collection of
+-- building blocks to code layers of your identicon.
 --
 -- A basic complete example looks like this:
 --
@@ -31,10 +31,10 @@
 -- >
 -- > myGenerator :: Int -> Int -> ByteString -> Maybe (Image PixelRGB8)
 -- > myGenerator = renderIdenticon myImageType myImpl
--- >
+--
 -- @myGenerator@ takes desired width, height, and hash that should have at
 -- least 4 bytes in it and returns an identicon corresponding to that hash
--- or 'Nothing' if the hash has less than 4 bytes in it or width or height
+-- or 'Nothing' if the hash has less than 4 bytes in it or width\/height
 -- don't make sense. The identicon has randomly placed circle with gradient
 -- filling changing (horizontally) from black to some color and back to
 -- black. The circle is mirrored 4 times, and every repetition is rotated by
@@ -84,29 +84,28 @@ import Data.Monoid
 -- Basic types
 
 -- | 'Identicon' is a type that represents an identicon consisting of zero
--- layers. The type is parametrized over the phantom type @n@ which is a
--- natural number on type level that represents the number of bytes that
+-- layers. The type is parametrized over a phantom type @n@ which is a
+-- natural number on the type level that represents the number of bytes that
 -- should be provided to generate this type of identicon. Bytes typically
--- come from some sort of hash that has fixed size.
+-- come from some sort of hash that has a fixed size.
 
 data Identicon (n :: Nat) = Identicon
 
 -- | 'Consumer' is a type that represents an entity that consumes bytes that
--- are available for identicon generation. It's parametrized over the
--- phantom type @n@ which is a natural number on type level that represents
--- the number of bytes that this entity consumes. At this moment, a
--- 'Consumer' always adds one 'Layer' to identicon when attached to it. The
--- number of bytes, specified as type parameter of 'Identicon' type must be
--- completely consumed by a collection of consumers attached to it. To
--- attach a consumer to 'Identicon', you use the ':+' type operator, see
--- below.
+-- are available for identicon generation. It's parametrized over a phantom
+-- type @n@ which is a natural number on the type level that represents the
+-- number of bytes that this entity consumes. At this moment, a 'Consumer'
+-- always adds one 'Layer' to identicon when attached to it. The number of
+-- bytes, specified as type parameter of 'Identicon' type must be completely
+-- consumed by a collection of consumers attached to it. To attach a
+-- consumer to 'Identicon', you use the @(':+')@ type operator, see below.
 
 data Consumer (n :: Nat)
 
--- | The ':+' type operator is used to attach 'Consumer's to 'Identicon',
--- thus adding layers to it and exhausting bytes that are available for
--- identicon generation. An example of identicon that can be generated from
--- 16 byte hash is shown below:
+-- | The @(':+')@ type operator is used to attach 'Consumer's to
+-- 'Identicon', thus adding layers to it and exhausting bytes that are
+-- available for identicon generation. An example of identicon that can be
+-- generated from 16 byte hash is shown below:
 --
 -- > type Icon = Identicon 16 :+ Consumer 5 :+ Consumer 5 :+ Consumer 6
 --
@@ -124,7 +123,7 @@ data a :+ b = a :+ b
 --     * Position on Y axis
 --
 -- …and returns a 'PixelRGB8' value. In this library, an identicon is
--- generated as “superposition” of several 'Layers'.
+-- generated as a “superposition” of several 'Layers'.
 
 newtype Layer = Layer
   { unLayer :: Int -> Int -> Int -> Int -> PixelRGB8 }
@@ -158,7 +157,7 @@ type family Implementation a where
   Implementation (Identicon n)     = Identicon n
   Implementation (a :+ Consumer n) = Implementation a :+ ToLayer n
 
--- | The 'ToLayer' type function calculates type that layer-producing
+-- | The 'ToLayer' type function calculates type that a layer-producing
 -- function should have to consume given number of bytes @n@.
 
 type family ToLayer (n :: Nat) :: k where
@@ -207,7 +206,7 @@ saturatedAddition x y = let z = x + y in
   if z < x then 0xff else z
 {-# INLINE saturatedAddition #-}
 
--- | Consume bytes from strict 'ByteString' and apply them to a function
+-- | Consume bytes from a strict 'ByteString' and apply them to a function
 -- that takes 'Word8' until it produces a 'Layer'.
 
 class ApplyBytes a where

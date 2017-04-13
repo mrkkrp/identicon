@@ -30,9 +30,9 @@ import Graphics.Identicon -- core definitions
 import Graphics.Identicon.Primitive -- some visual primitives
 ```
 
-You first write a type that has information about total number of bytes your
-identicon consumes and number of distinct visual components it has (it's
-called “layers” in terminology of the package):
+You first write a type that holds information about total number of bytes
+your identicon consumes and number of distinct visual components it has
+(they are called “layers” in the terminology of the package):
 
 ```haskell
 type MyIcon = Identicon 12 :+ Consumer 4 :+ Consumer 4 :+ Consumer 4
@@ -42,8 +42,8 @@ Here we have an identicon that needs 12 bytes to be generated. It has three
 consumers that take 4 bytes each and generate layers, i.e. visual objects
 (circles, squares, etc.).
 
-The second step is to write implementation of every layer. We can use
-primitives available out-of-box, they live in the
+The second step is to write implementation of every layer. We can use the
+primitives available out-of-the-box, they live in the
 `Graphics.Identicon.Primitive` module:
 
 ```haskell
@@ -59,8 +59,8 @@ We could choose to code every layer differently, but since position and
 color of every layer are unlikely to be the same, this approach will work
 well too.
 
-Every byte is available to layer-generating function as a distinct `Word8`
-argument. The type system makes sure that:
+Every byte is available to the layer-generating function as a distinct
+`Word8` argument. The type system makes sure that:
 
 * you consume exactly as many bytes as you promised in type of your
   identicon;

@@ -11,8 +11,8 @@
 -- identicon. Filling functions is where you start. They create color layers
 -- that occupy all available space. If you want to limit a layer in size,
 -- specify where this smaller part should be, take a look at the “Position,
--- size, and shape” section. It also contains a 'circle' combinator that
--- limits given filling is such a way that it forms a circle. Finally, we
+-- size, and shape” section. It also contains the 'circle' combinator that
+-- limits a given filling is such a way that it forms a circle. Finally, we
 -- have combinators that add symmetry to layers and other auxiliary
 -- functions.
 --

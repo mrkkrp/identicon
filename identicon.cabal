@@ -80,7 +80,7 @@ test-suite tests
                     , base             >= 4.7     && < 5.0
                     , bytestring       >= 0.10.6  && < 0.13
                     , hspec            >= 2.0     && < 3.0
-                    , identicon        >= 0.2.1
+                    , identicon
   if !impl(ghc >= 8.0)
     build-depends:    semigroups       == 0.18.*
   if flag(dev)
@@ -97,7 +97,7 @@ benchmark bench
                     , JuicyPixels      >= 3.2.6.5 && < 4.0
                     , bytestring       >= 0.10.6  && < 0.13
                     , criterion        >= 0.6.2.1 && < 1.2
-                    , identicon        >= 0.2.1
+                    , identicon
                     , random           >= 1.1     && < 1.2
                     , tf-random        >= 0.4     && < 0.6
   if flag(dev)

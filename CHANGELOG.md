@@ -1,3 +1,7 @@
+## Identicon 0.2.2
+
+* Improved documentation and metadata.
+
 ## Identicon 0.2.1
 
 * Added `Semigroup` and `Monoid` instances for `Layer`.

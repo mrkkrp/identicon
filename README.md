@@ -7,16 +7,14 @@
 [![Build Status](https://travis-ci.org/mrkkrp/identicon.svg?branch=master)](https://travis-ci.org/mrkkrp/identicon)
 [![Coverage Status](https://coveralls.io/repos/mrkkrp/identicon/badge.svg?branch=master&service=github)](https://coveralls.io/github/mrkkrp/identicon?branch=master)
 
-The package implements flexible generation of identicons using the
-[Juicy Pixels](https://hackage.haskell.org/package/JuicyPixels) package.
-It's reasonably fast for my taste, and since identicons are usually not
-bigger than 420 × 420 pixels, I think that sequential generation that
-JuicyPixels supports fits the task very well.
+The package implements a flexible framework for identicons generation on top
+of the [Juicy Pixels](https://hackage.haskell.org/package/JuicyPixels)
+package.
 
 ## Quick start
 
 To use the package you usually need the following set of imports (and a
-couple of language extensions for type level magic):
+couple of language extensions for the type level magic):
 
 ```haskell
 {-# LANGUAGE DataKinds     #-}
@@ -67,8 +65,8 @@ Every byte is available to the layer-generating function as a distinct
 
 * you have as many layers as you described in type of your identicon;
 
-* every function in your implementation has correct signature (i.e. it grabs
-  as many `Word8`s as promised and produces a `Layer` in the end).
+* every function in your implementation has a correct signature (i.e. it
+  grabs as many `Word8`s as promised and produces a `Layer` in the end).
 
 Mixing of layers and generation is handled by the library like this:
 
@@ -86,7 +84,8 @@ genMyIdenticon
 genMyIdenticon = renderIdenticon (Proxy :: Proxy MyIcon) myImpl
 ```
 
-For more information head straight to Haddocks. BTW, I have written
+For more information head straight to the Haddocks. BTW, I have
+written
 [a blog post](https://mrkkrp.github.io/posts/the-identicon-package.html)
 about the package where I demonstrate some pictures generated with it.
 

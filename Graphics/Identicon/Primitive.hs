@@ -23,7 +23,7 @@
 -- > f :: Word8 -> Word8 -> Word8 -> Layer
 -- > f r g b = circle $ gradientLR id black (PixelRGB8 r g b)
 --
--- The function consumes 3 bytes from hash when it's used in identicon.
+-- The function consumes 3 bytes from a hash when it's used in identicon.
 
 module Graphics.Identicon.Primitive
   ( -- * Filling

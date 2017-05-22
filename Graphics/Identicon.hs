@@ -135,30 +135,30 @@ instance Monoid Layer where
   mempty  = Layer $ \_ _ _ _ -> PixelRGB8 0 0 0
   mappend = (S.<>)
 
--- | The 'BytesAvailable' type function calculates how many bytes available
--- for consumption in a given identicon.
+-- | The 'BytesAvailable' type function calculates how many bytes are
+-- available for consumption in a given identicon.
 
 type family BytesAvailable a :: Nat where
   BytesAvailable (Identicon n) = n
   BytesAvailable (x :+ y)      = BytesAvailable x
 
--- | The 'BytesConsumed' type function calculates how many bytes is consumed
--- in a given identicon.
+-- | The 'BytesConsumed' type function calculates how many bytes are
+-- consumed in a given identicon.
 
 type family BytesConsumed a :: Nat where
   BytesConsumed (Identicon n) = 0
   BytesConsumed (Consumer  n) = n
   BytesConsumed (x :+ y)      = BytesConsumed x + BytesConsumed y
 
--- | The 'Implementation' type function returns type of the code which can
--- implement the given identicon.
+-- | The 'Implementation' type function returns the type of the code which
+-- can implement the given identicon.
 
 type family Implementation a where
   Implementation (Identicon n)     = Identicon n
   Implementation (a :+ Consumer n) = Implementation a :+ ToLayer n
 
 -- | The 'ToLayer' type function calculates type that a layer-producing
--- function should have to consume given number of bytes @n@.
+-- function should have to consume the given number of bytes @n@.
 
 type family ToLayer (n :: Nat) :: k where
   ToLayer 0 = Layer
@@ -198,8 +198,7 @@ mixPixels
 mixPixels a b x y = mixWith (const saturatedAddition) (a x y) (b x y)
 {-# INLINE mixPixels #-}
 
--- | An implementation of saturated addition for bytes. This is a reasonably
--- efficient thing.
+-- | An implementation of saturated addition for bytes.
 
 saturatedAddition :: Word8 -> Word8 -> Word8
 saturatedAddition x y = let z = x + y in

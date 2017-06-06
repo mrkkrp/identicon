@@ -86,8 +86,8 @@ genMyIdenticon = renderIdenticon (Proxy :: Proxy MyIcon) myImpl
 
 For more information head straight to the Haddocks. BTW, I have
 written
-[a blog post](https://mrkkrp.github.io/posts/the-identicon-package.html)
-about the package where I demonstrate some pictures generated with it.
+[a blog post](https://markkarpov.com/post/the-identicon-package.html) about
+the package where I demonstrate some pictures generated with it.
 
 ## License
 

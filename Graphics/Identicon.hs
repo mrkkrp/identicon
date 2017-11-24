@@ -76,10 +76,6 @@ import GHC.TypeLits
 import qualified Data.ByteString as B
 import qualified Data.Semigroup  as S
 
-#if !MIN_VERSION_base(4,8,0)
-import Data.Monoid
-#endif
-
 ----------------------------------------------------------------------------
 -- Basic types
 

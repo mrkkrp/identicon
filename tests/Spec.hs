@@ -17,10 +17,6 @@ import Test.Hspec
 import Test.QuickCheck hiding (oneof)
 import qualified Data.ByteString as B
 
-#if !MIN_VERSION_base(4,8,0)
-import Data.Monoid
-#endif
-
 main :: IO ()
 main = hspec spec
 

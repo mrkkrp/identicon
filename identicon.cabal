@@ -64,7 +64,7 @@ benchmark bench
   build-depends:      base             >= 4.8     && < 5.0
                     , JuicyPixels      >= 3.2.6.5 && < 4.0
                     , bytestring       >= 0.10.6  && < 0.13
-                    , criterion        >= 0.6.2.1 && < 1.3
+                    , criterion        >= 0.6.2.1 && < 1.4
                     , identicon
                     , random           >= 1.1     && < 1.2
                     , tf-random        >= 0.4     && < 0.6

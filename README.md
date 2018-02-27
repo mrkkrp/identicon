@@ -89,6 +89,12 @@ written
 [a blog post](https://markkarpov.com/post/the-identicon-package.html) about
 the package where I demonstrate some pictures generated with it.
 
+## Related packages
+
+The following packages are designed to be used with `identicon`:
+
+* [`identicon-style-squares`](https://hackage.haskell.org/package/identicon-style-squares)
+
 ## License
 
 Copyright © 2016–2018 Mark Karpov

@@ -5,7 +5,6 @@
 [![Stackage Nightly](http://stackage.org/package/identicon/badge/nightly)](http://stackage.org/nightly/package/identicon)
 [![Stackage LTS](http://stackage.org/package/identicon/badge/lts)](http://stackage.org/lts/package/identicon)
 [![Build Status](https://travis-ci.org/mrkkrp/identicon.svg?branch=master)](https://travis-ci.org/mrkkrp/identicon)
-[![Coverage Status](https://coveralls.io/repos/mrkkrp/identicon/badge.svg?branch=master&service=github)](https://coveralls.io/github/mrkkrp/identicon?branch=master)
 
 The package implements a flexible framework for identicons generation on top
 of the [Juicy Pixels](https://hackage.haskell.org/package/JuicyPixels)

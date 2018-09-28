@@ -40,7 +40,6 @@
 -- black. The circle is mirrored 4 times, and every repetition is rotated by
 -- 90°. This identicon consumes 4 bytes and has one layer.
 
-{-# LANGUAGE CPP                  #-}
 {-# LANGUAGE DataKinds            #-}
 {-# LANGUAGE FlexibleContexts     #-}
 {-# LANGUAGE FlexibleInstances    #-}

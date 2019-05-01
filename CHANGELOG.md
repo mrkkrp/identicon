@@ -1,3 +1,7 @@
+## Unreleased
+
+* Dropped support for GHC 7.10.
+
 ## Identicon 0.2.2
 
 * Improved documentation and metadata.

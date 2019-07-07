@@ -96,6 +96,6 @@ The following packages are designed to be used with `identicon`:
 
 ## License
 
-Copyright © 2016–2019 Mark Karpov
+Copyright © 2016–present Mark Karpov
 
 Distributed under BSD 3 clause license.

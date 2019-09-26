@@ -1,7 +1,7 @@
 name:                 identicon
 version:              0.2.2
 cabal-version:        1.18
-tested-with:          GHC==8.2.2, GHC==8.4.4, GHC==8.6.5
+tested-with:          GHC==8.4.4, GHC==8.6.5, GHC==8.8.1
 license:              BSD3
 license-file:         LICENSE.md
 author:               Mark Karpov <markkarpov92@gmail.com>
@@ -26,7 +26,7 @@ flag dev
   default:            False
 
 library
-  build-depends:      base             >= 4.10    && < 5.0
+  build-depends:      base             >= 4.11    && < 5.0
                     , JuicyPixels      >= 3.2.6.5 && < 4.0
                     , bytestring       >= 0.10.6  && < 0.13
   exposed-modules:    Graphics.Identicon
@@ -40,7 +40,6 @@ library
                       -Wincomplete-record-updates
                       -Wincomplete-uni-patterns
                       -Wnoncanonical-monad-instances
-                      -Wnoncanonical-monadfail-instances
   default-language:   Haskell2010
 
 test-suite tests
@@ -49,7 +48,7 @@ test-suite tests
   type:               exitcode-stdio-1.0
   build-depends:      JuicyPixels      >= 3.2.6.5 && < 4.0
                     , QuickCheck       >= 2.7     && < 3.0
-                    , base             >= 4.10    && < 5.0
+                    , base             >= 4.11    && < 5.0
                     , bytestring       >= 0.10.6  && < 0.13
                     , hspec            >= 2.0     && < 3.0
                     , identicon
@@ -63,7 +62,7 @@ benchmark bench
   main-is:            Main.hs
   hs-source-dirs:     bench
   type:               exitcode-stdio-1.0
-  build-depends:      base             >= 4.10    && < 5.0
+  build-depends:      base             >= 4.11    && < 5.0
                     , JuicyPixels      >= 3.2.6.5 && < 4.0
                     , bytestring       >= 0.10.6  && < 0.13
                     , criterion        >= 0.6.2.1 && < 1.6

@@ -94,6 +94,13 @@ The following packages are designed to be used with `identicon`:
 
 * [`identicon-style-squares`](https://hackage.haskell.org/package/identicon-style-squares)
 
+## Contribution
+
+Issues, bugs, and questions may be reported in [the GitHub issue tracker for
+this project](https://github.com/mrkkrp/identicon/issues).
+
+Pull requests are also welcome.
+
 ## License
 
 Copyright © 2016–present Mark Karpov

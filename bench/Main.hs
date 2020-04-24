@@ -1,43 +1,47 @@
-{-# LANGUAGE DataKinds         #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeOperators     #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Main (main) where
 
 import Codec.Picture
 import Criterion.Main
 import Data.ByteString (ByteString)
+import qualified Data.ByteString as B
 import Data.Proxy
 import Data.Word (Word8)
 import Graphics.Identicon
 import Graphics.Identicon.Primitive
 import System.Random
 import System.Random.TF.Init
-import qualified Data.ByteString as B
 
 main :: IO ()
-main = defaultMain
-  [ bgen 0  0 gen0
-  , bgen 4  1 gen1
-  , bgen 8  2 gen2
-  , bgen 12 3 gen3 ]
+main =
+  defaultMain
+    [ bgen 0 0 gen0,
+      bgen 4 1 gen1,
+      bgen 8 2 gen2,
+      bgen 12 3 gen3
+    ]
 
 -- | Run an identicon benchmark given its name and rendering function.
-
-bgen
-  :: Int               -- ^ Number of bytes the generator expects
-  -> Int               -- ^ Number of layers the generator has
-  -> (Int -> Int -> ByteString -> Maybe (Image PixelRGB8)) -- ^ Generator
-  -> Benchmark         -- ^ Benchmark
+bgen ::
+  -- | Number of bytes the generator expects
+  Int ->
+  -- | Number of layers the generator has
+  Int ->
+  -- | Generator
+  (Int -> Int -> ByteString -> Maybe (Image PixelRGB8)) ->
+  -- | Benchmark
+  Benchmark
 bgen bytes layers gen = bgroup groupName (f <$> testSizes)
   where
     groupName = show bytes ++ " bytes/" ++ show layers ++ " layers"
-    f n       =
+    f n =
       let n' = show n
-      in env (getBS bytes) (bench (n' ++ " × " ++ n') . nf (gen n n))
+       in env (getBS bytes) (bench (n' ++ " × " ++ n') . nf (gen n n))
 
 -- | Obtain a quite random 'ByteString' of specified length.
-
 getBS :: Int -> IO ByteString
 getBS n = do
   gen <- initTFGen
@@ -45,9 +49,8 @@ getBS n = do
 
 -- | We render a series of rectangular icons in 'bgen', this list contains
 -- size of a side of icon in pixels.
-
 testSizes :: [Int]
-testSizes = [16,32,64,128,256,512,1024]
+testSizes = [16, 32, 64, 128, 256, 512, 1024]
 
 ----------------------------------------------------------------------------
 -- Identicon generators
@@ -79,5 +82,7 @@ gen3 = renderIdenticon (Proxy :: Proxy Gen3) i
     i = Identicon :+ stdLayer :+ stdLayer :+ stdLayer
 
 stdLayer :: Pixel8 -> Pixel8 -> Pixel8 -> Word8 -> Layer
-stdLayer r g b n = rsym $ onGrid 4 4 n $
-  circle $ gradientLR (edge . mid) black (PixelRGB8 r g b)
+stdLayer r g b n =
+  rsym $ onGrid 4 4 n
+    $ circle
+    $ gradientLR (edge . mid) black (PixelRGB8 r g b)

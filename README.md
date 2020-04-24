@@ -16,7 +16,7 @@ To use the package you usually need the following set of imports (and a
 couple of language extensions for the type level magic):
 
 ```haskell
-{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 
 import Codec.Picture -- JuicyPixels
@@ -48,8 +48,9 @@ myImpl :: Implementation MyIcon
 myImpl = Identicon :+ a :+ a :+ a
   where
     a :: Word8 -> Word8 -> Word8 -> Word8 -> Layer
-    a r g b n = rsym $ onGrid 3 3 n $
-      gradientXY (edge . mid) black (PixelRGB8 r g b)
+    a r g b n =
+      rsym $ onGrid 3 3 n $
+        gradientXY (edge . mid) black (PixelRGB8 r g b)
 ```
 
 We could choose to code every layer differently, but since position and
@@ -73,13 +74,15 @@ Mixing of layers and generation is handled by the library like this:
 -- | Here is the function that generates your identicons. It's usually
 -- convenient to wrap the 'renderIdenticon' function that comes with the
 -- library.
-
-genMyIdenticon
-  :: Int               -- ^ Identicon width
-  -> Int               -- ^ Identicon height
-  -> ByteString        -- ^ Input (some sort of hash or something)
-  -> Maybe (Image PixelRGB8)
-     -- ^ Identicon, unless 'ByteString' is too short
+genMyIdenticon ::
+  -- | Identicon width
+  Int ->
+  -- | Identicon height
+  Int ->
+  -- | Input (some sort of hash or something)
+  ByteString ->
+  -- | Identicon, unless 'ByteString' is too short
+  Maybe (Image PixelRGB8)
 genMyIdenticon = renderIdenticon (Proxy :: Proxy MyIcon) myImpl
 ```
 

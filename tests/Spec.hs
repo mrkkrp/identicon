@@ -50,14 +50,12 @@ spec = do
     [0xf9, 0x9b, 0xb7, 0x11, 0x5b, 0xca, 0x00]
     "data-examples/identicon-22.png"
   describe "Semigroup and Monoid instances of Layer" $ do
-    it "mempty always returns black pixel"
-      $ property
-      $ \w h x y ->
+    it "mempty always returns black pixel" $
+      property $ \w h x y ->
         let (Layer f) = mempty
          in f w h x y `shouldBe` PixelRGB8 0 0 0
-    it "mappend combines layers"
-      $ property
-      $ \w'' h'' x'' y'' ->
+    it "mappend combines layers" $
+      property $ \w'' h'' x'' y'' ->
         let w = w'' `mod` 10
             h = h'' `mod` 10
             x = x'' `mod` 10
@@ -74,15 +72,15 @@ spec = do
 
 renderIdenticonSpec :: Spec
 renderIdenticonSpec = do
-  context "when we pass too short byte string"
-    $ it "returns Nothing"
-    $ shouldBeNothing (gen0 100 100 "aaa")
-  context "when we pass nonsential width value"
-    $ it "returns Nothing"
-    $ shouldBeNothing (gen0 0 100 "aaaa")
-  context "when we pass nonsential height value"
-    $ it "returns Nothing"
-    $ shouldBeNothing (gen0 100 0 "aaaa")
+  context "when we pass too short byte string" $
+    it "returns Nothing" $
+      shouldBeNothing (gen0 100 100 "aaa")
+  context "when we pass nonsential width value" $
+    it "returns Nothing" $
+      shouldBeNothing (gen0 0 100 "aaaa")
+  context "when we pass nonsential height value" $
+    it "returns Nothing" $
+      shouldBeNothing (gen0 100 0 "aaaa")
 
 ----------------------------------------------------------------------------
 -- Identicon generators
@@ -94,9 +92,10 @@ gen0 = renderIdenticon (Proxy :: Proxy Gen0) i
   where
     i = Identicon :+ a
     a r g b n =
-      rsym $ onGrid 4 4 n
-        $ circle
-        $ gradientLR (edge . mid) black (PixelRGB8 r g b)
+      rsym $
+        onGrid 4 4 n $
+          circle $
+            gradientLR (edge . mid) black (PixelRGB8 r g b)
 
 type Gen1 = Identicon 12 :+ Consumer 4 :+ Consumer 4 :+ Consumer 4
 
@@ -105,15 +104,18 @@ gen1 = renderIdenticon (Proxy :: Proxy Gen1) i
   where
     i = Identicon :+ a0 :+ a1 :+ a2
     a0 r g b n =
-      hsym $ onGrid 3 3 n $
-        gradientTLBR id black (PixelRGB8 r g b)
+      hsym $
+        onGrid 3 3 n $
+          gradientTLBR id black (PixelRGB8 r g b)
     a1 r g b n =
-      vsym $ onGrid 4 4 n $
-        gradientXY id black (PixelRGB8 r g b)
+      vsym $
+        onGrid 4 4 n $
+          gradientXY id black (PixelRGB8 r g b)
     a2 r g b n =
-      hvsym $ onGrid 5 5 n
-        $ circle
-        $ gradientTRBL mid (PixelRGB8 r g b) black
+      hvsym $
+        onGrid 5 5 n $
+          circle $
+            gradientTRBL mid (PixelRGB8 r g b) black
 
 type Gen2 = Identicon 7 :+ Consumer 3 :+ Consumer 4
 
@@ -146,8 +148,9 @@ shouldBeNothing m =
   FilePath ->
   Spec
 ω f bs path =
-  describe path $ it ("reproduces " ++ path) $
-    compareWithFile f (B.pack bs) path
+  describe path $
+    it ("reproduces " ++ path) $
+      compareWithFile f (B.pack bs) path
 
 -- | Take function that produces identicon, binary input for it, path to
 -- already rendered identicon and compare them. Fail with informative

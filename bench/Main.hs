@@ -83,6 +83,7 @@ gen3 = renderIdenticon (Proxy :: Proxy Gen3) i
 
 stdLayer :: Pixel8 -> Pixel8 -> Pixel8 -> Word8 -> Layer
 stdLayer r g b n =
-  rsym $ onGrid 4 4 n
-    $ circle
-    $ gradientLR (edge . mid) black (PixelRGB8 r g b)
+  rsym $
+    onGrid 4 4 n $
+      circle $
+        gradientLR (edge . mid) black (PixelRGB8 r g b)

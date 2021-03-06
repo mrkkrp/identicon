@@ -59,7 +59,7 @@ test-suite tests
         base >=4.13 && <5.0,
         bytestring >=0.10.6 && <0.13,
         hspec >=2.0 && <3.0,
-        identicon -any
+        identicon
 
     if flag(dev)
         ghc-options: -Wall -Werror
@@ -77,7 +77,7 @@ benchmark bench
         JuicyPixels >=3.2.6.5 && <4.0,
         bytestring >=0.10.6 && <0.13,
         criterion >=0.6.2.1 && <1.6,
-        identicon -any,
+        identicon,
         random >=1.1 && <1.2,
         tf-random >=0.4 && <0.6
 

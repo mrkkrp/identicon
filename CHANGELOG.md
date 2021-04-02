@@ -1,6 +1,6 @@
 ## Unreleased
 
-* Dropped support for GHC 8.2 and older.
+* Dropped support for GHC 8.6 and older.
 
 ## Identicon 0.2.2
 
@@ -14,9 +14,8 @@
 
 * Added benchmarks.
 
-* Renamed `applyWords` to `applyBytes` (method of type class `ApplyBytes`).
-  It's unlikely that anyone uses it though as it's more of internal
-  machinery.
+* Renamed `applyWords` to `applyBytes` (the method of type class
+  `ApplyBytes`).
 
 ## Identicon 0.1.0
 

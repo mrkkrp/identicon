@@ -6,14 +6,13 @@
 [![Stackage LTS](http://stackage.org/package/identicon/badge/lts)](http://stackage.org/lts/package/identicon)
 ![CI](https://github.com/mrkkrp/identicon/workflows/CI/badge.svg?branch=master)
 
-The package implements a flexible framework for identicons generation on top
-of the [Juicy Pixels](https://hackage.haskell.org/package/JuicyPixels)
-package.
+The package implements a flexible framework for generation of identicons on
+top of [Juicy Pixels](https://hackage.haskell.org/package/JuicyPixels).
 
 ## Quick start
 
-To use the package you usually need the following set of imports (and a
-couple of language extensions for the type level magic):
+To use the package you usually need the following imports and language
+extensions:
 
 ```haskell
 {-# LANGUAGE DataKinds #-}
@@ -27,9 +26,9 @@ import Graphics.Identicon -- core definitions
 import Graphics.Identicon.Primitive -- some visual primitives
 ```
 
-You first write a type that holds information about total number of bytes
-your identicon consumes and number of distinct visual components it has
-(they are called “layers” in the terminology of the package):
+You first write a type that represents the total number of bytes your
+identicon consumes and the number of distinct visual components it has (they
+are called “layers” in the terminology of the package):
 
 ```haskell
 type MyIcon = Identicon 12 :+ Consumer 4 :+ Consumer 4 :+ Consumer 4
@@ -53,20 +52,17 @@ myImpl = Identicon :+ a :+ a :+ a
         gradientXY (edge . mid) black (PixelRGB8 r g b)
 ```
 
-We could choose to code every layer differently, but since position and
-color of every layer are unlikely to be the same, this approach will work
-well too.
-
 Every byte is available to the layer-generating function as a distinct
 `Word8` argument. The type system makes sure that:
 
-* you consume exactly as many bytes as you promised in type of your
+* you consume exactly as many bytes as you promised in the type of your
   identicon;
 
-* you have as many layers as you described in type of your identicon;
+* you have as many layers as you have described in the type of your
+  identicon;
 
 * every function in your implementation has a correct signature (i.e. it
-  grabs as many `Word8`s as promised and produces a `Layer` in the end).
+  takes as many `Word8`s as promised and produces a `Layer` in the end).
 
 Mixing of layers and generation is handled by the library like this:
 

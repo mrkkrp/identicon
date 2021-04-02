@@ -41,14 +41,14 @@ bgen bytes layers gen = bgroup groupName (f <$> testSizes)
       let n' = show n
        in env (getBS bytes) (bench (n' ++ " × " ++ n') . nf (gen n n))
 
--- | Obtain a quite random 'ByteString' of specified length.
+-- | Obtain a random 'ByteString' of specified length.
 getBS :: Int -> IO ByteString
 getBS n = do
   gen <- initTFGen
   (return . B.pack . take n . randoms) gen
 
 -- | We render a series of rectangular icons in 'bgen', this list contains
--- size of a side of icon in pixels.
+-- size of a side of each icon in pixels.
 testSizes :: [Int]
 testSizes = [16, 32, 64, 128, 256, 512, 1024]
 

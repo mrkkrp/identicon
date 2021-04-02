@@ -23,7 +23,7 @@
 -- > f :: Word8 -> Word8 -> Word8 -> Layer
 -- > f r g b = circle $ gradientLR id black (PixelRGB8 r g b)
 --
--- The function consumes 3 bytes from a hash when it's used in identicon.
+-- The function consumes 3 bytes.
 module Graphics.Identicon.Primitive
   ( -- * Filling
     black,
@@ -218,7 +218,7 @@ onGrid α β n' l = Layer $ \w h x y ->
         else unLayer l (xB - xA) (yB - yA) (x - xA) (y - yA)
 {-# INLINE onGrid #-}
 
--- | Limit given layer so it forms a circle.
+-- | Limit given layer so that it forms a circle.
 circle :: Layer -> Layer
 circle l = Layer $ \w h x y ->
   let w', h', v, r0, r1 :: Float
@@ -289,7 +289,7 @@ rsym l = Layer $ \w h x y ->
 ----------------------------------------------------------------------------
 -- Other
 
--- | Select one of provided alternatives given a number.
+-- | Select one of the provided alternatives given a number.
 oneof :: Integral n => [a] -> n -> a
 oneof xs n = xs !! (fromIntegral n `rem` length xs)
 {-# INLINE oneof #-}

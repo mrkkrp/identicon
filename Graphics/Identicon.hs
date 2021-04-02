@@ -42,13 +42,13 @@
 -- > myGenerator :: Int -> Int -> ByteString -> Maybe (Image PixelRGB8)
 -- > myGenerator = renderIdenticon myImageType myImpl
 --
--- @myGenerator@ takes desired width, height, and hash that should have at
--- least 4 bytes in it and returns an identicon corresponding to that hash
--- or 'Nothing' if the hash has less than 4 bytes in it or width\/height
--- don't make sense. The identicon has randomly placed circle with gradient
--- filling changing (horizontally) from black to some color and back to
--- black. The circle is mirrored 4 times, and every repetition is rotated by
--- 90°. This identicon consumes 4 bytes and has one layer.
+-- @myGenerator@ takes the desired width, height, and a hash that should
+-- have at least 4 bytes in it and returns an identicon corresponding to
+-- that hash or 'Nothing' if the hash has less than 4 bytes in it or when
+-- width\/height don't make sense. The identicon has randomly placed circle
+-- with gradient filling changing (horizontally) from black to some color
+-- and back to black. The circle is mirrored 4 times, and every repetition
+-- is rotated by 90°. This identicon consumes 4 bytes and has one layer.
 module Graphics.Identicon
   ( -- * Basic types
     Identicon (..),
@@ -90,14 +90,15 @@ data Identicon (n :: Nat) = Identicon
 -- are available for identicon generation. It's parametrized over a phantom
 -- type @n@ which is a natural number on the type level that represents the
 -- number of bytes that this entity consumes. At this moment, a 'Consumer'
--- always adds one 'Layer' to identicon when attached to it. The number of
--- bytes, specified as type parameter of 'Identicon' type must be completely
--- consumed by a collection of consumers attached to it. To attach a
--- consumer to 'Identicon', you use the @(':+')@ type operator, see below.
+-- always adds one 'Layer' to an 'Identicon' when attached to it. The number
+-- of bytes, specified as type parameter of 'Identicon' type must be
+-- completely consumed by a collection of consumers attached to it. To
+-- attach a consumer to 'Identicon', you use the @(':+')@ type operator, see
+-- below.
 data Consumer (n :: Nat)
 
 -- | The @(':+')@ type operator is used to attach 'Consumer's to
--- 'Identicon', thus adding layers to it and exhausting bytes that are
+-- 'Identicon', thus adding layers to it and exhausting the bytes that are
 -- available for identicon generation. An example of identicon that can be
 -- generated from 16 byte hash is shown below:
 --

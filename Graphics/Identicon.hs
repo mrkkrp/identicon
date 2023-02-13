@@ -216,7 +216,7 @@ class ApplyBytes a where
 instance ApplyBytes Layer where
   applyBytes f bs = (bs, f)
 
-instance ApplyBytes f => ApplyBytes (Word8 -> f) where
+instance (ApplyBytes f) => ApplyBytes (Word8 -> f) where
   applyBytes f bs =
     let (b, bs') = fromJust (B.uncons bs)
      in applyBytes (f b) bs'

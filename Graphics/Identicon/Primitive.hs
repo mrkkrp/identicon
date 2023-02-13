@@ -192,7 +192,7 @@ edge x = x * x
 -- The index @n@ can be greater than maximal index, in this case reminder of
 -- division of @n@ by @w * h@ is used.
 onGrid ::
-  Integral a =>
+  (Integral a) =>
   -- | Number of horizontal positions
   Int ->
   -- | Number of vertical positions
@@ -290,6 +290,6 @@ rsym l = Layer $ \w h x y ->
 -- Other
 
 -- | Select one of the provided alternatives given a number.
-oneof :: Integral n => [a] -> n -> a
+oneof :: (Integral n) => [a] -> n -> a
 oneof xs n = xs !! (fromIntegral n `rem` length xs)
 {-# INLINE oneof #-}

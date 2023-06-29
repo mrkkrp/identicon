@@ -7,7 +7,7 @@ module Main (main) where
 import Codec.Picture
 import Control.Monad
 import Data.ByteString (ByteString)
-import qualified Data.ByteString as B
+import Data.ByteString qualified as B
 import Data.Function (on)
 import Data.Proxy
 import Data.Word (Word8)

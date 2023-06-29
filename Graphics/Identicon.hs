@@ -1,7 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -69,10 +68,10 @@ where
 
 import Codec.Picture
 import Data.ByteString (ByteString)
-import qualified Data.ByteString as B
+import Data.ByteString qualified as B
 import Data.Maybe (fromJust)
 import Data.Proxy
-import qualified Data.Semigroup as S
+import Data.Semigroup qualified as S
 import Data.Word (Word8)
 import GHC.TypeLits
 

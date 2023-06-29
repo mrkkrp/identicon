@@ -7,7 +7,7 @@ module Main (main) where
 import Codec.Picture
 import Criterion.Main
 import Data.ByteString (ByteString)
-import qualified Data.ByteString as B
+import Data.ByteString qualified as B
 import Data.Proxy
 import Data.Word (Word8)
 import Graphics.Identicon

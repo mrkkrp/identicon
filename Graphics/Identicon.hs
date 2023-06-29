@@ -149,7 +149,7 @@ type family Implementation a where
 
 -- | The 'ToLayer' type function calculates type that a layer-producing
 -- function should have to consume the given number of bytes @n@.
-type family ToLayer (n :: Nat) :: k where
+type family ToLayer (n :: Nat) where
   ToLayer 0 = Layer
   ToLayer n = Word8 -> ToLayer (n - 1)
 

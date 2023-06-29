@@ -38,15 +38,12 @@ library
         bytestring >=0.10.6 && <0.13
 
     if flag(dev)
-        ghc-options: -Wall -Werror
+        ghc-options:
+            -Wall -Werror -Wredundant-constraints -Wpartial-fields
+            -Wunused-packages
 
     else
         ghc-options: -O2 -Wall
-
-    if flag(dev)
-        ghc-options:
-            -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns
-            -Wnoncanonical-monad-instances
 
 test-suite tests
     type:             exitcode-stdio-1.0
@@ -62,7 +59,9 @@ test-suite tests
         identicon
 
     if flag(dev)
-        ghc-options: -Wall -Werror
+        ghc-options:
+            -Wall -Werror -Wredundant-constraints -Wpartial-fields
+            -Wunused-packages
 
     else
         ghc-options: -O2 -Wall
@@ -82,7 +81,9 @@ benchmark bench
         tf-random >=0.4 && <0.6
 
     if flag(dev)
-        ghc-options: -O2 -Wall -Werror
+        ghc-options:
+            -Wall -Werror -Wredundant-constraints -Wpartial-fields
+            -Wunused-packages
 
     else
         ghc-options: -O2 -Wall

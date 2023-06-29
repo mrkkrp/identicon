@@ -1,7 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -69,10 +68,10 @@ where
 
 import Codec.Picture
 import Data.ByteString (ByteString)
-import qualified Data.ByteString as B
+import Data.ByteString qualified as B
 import Data.Maybe (fromJust)
 import Data.Proxy
-import qualified Data.Semigroup as S
+import Data.Semigroup qualified as S
 import Data.Word (Word8)
 import GHC.TypeLits
 
@@ -150,7 +149,7 @@ type family Implementation a where
 
 -- | The 'ToLayer' type function calculates type that a layer-producing
 -- function should have to consume the given number of bytes @n@.
-type family ToLayer (n :: Nat) :: k where
+type family ToLayer (n :: Nat) where
   ToLayer 0 = Layer
   ToLayer n = Word8 -> ToLayer (n - 1)
 

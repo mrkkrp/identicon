@@ -1,6 +1,6 @@
-## Unreleased
+## Identicon 0.2.3
 
-* Dropped support for GHC 8.6 and older.
+* Maintenance release with newer dependencies.
 
 ## Identicon 0.2.2
 

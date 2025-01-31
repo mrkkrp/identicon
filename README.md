@@ -4,7 +4,7 @@
 [![Hackage](https://img.shields.io/hackage/v/identicon.svg?style=flat)](https://hackage.haskell.org/package/identicon)
 [![Stackage Nightly](http://stackage.org/package/identicon/badge/nightly)](http://stackage.org/nightly/package/identicon)
 [![Stackage LTS](http://stackage.org/package/identicon/badge/lts)](http://stackage.org/lts/package/identicon)
-![CI](https://github.com/mrkkrp/identicon/workflows/CI/badge.svg?branch=master)
+[![CI](https://github.com/mrkkrp/identicon/actions/workflows/ci.yaml/badge.svg)](https://github.com/mrkkrp/identicon/actions/workflows/ci.yaml)
 
 The package implements a flexible framework for generation of identicons on
 top of [Juicy Pixels](https://hackage.haskell.org/package/JuicyPixels).

@@ -38,8 +38,8 @@ Here we have an identicon that needs 12 bytes to be generated. It has three
 consumers that take 4 bytes each and generate layers, i.e. visual objects
 (circles, squares, etc.).
 
-The second step is to write implementation of every layer. We can use the
-primitives available out-of-the-box, they live in the
+The second step is to write the implementation of every layer. We can use
+the primitives available out of the box; they live in the
 `Graphics.Identicon.Primitive` module:
 
 ```haskell
@@ -104,4 +104,4 @@ Pull requests are also welcome.
 
 Copyright © 2016–present Mark Karpov
 
-Distributed under BSD 3 clause license.
+Distributed under the BSD 3-clause license.

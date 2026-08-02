@@ -8,11 +8,11 @@
 -- Portability :  portable
 --
 -- Various primitives and combinators that help you write code for your
--- identicon. Filling functions is where you start. They create color layers
--- that occupy all available space. If you want to limit a layer in size,
+-- identicon. Filling functions are where you start. They create color layers
+-- that occupy all available space. If you want to limit a layer in size and
 -- specify where this smaller part should be, take a look at the “Position,
 -- size, and shape” section. It also contains the 'circle' combinator that
--- limits a given filling is such a way that it forms a circle. Finally, we
+-- limits a given filling in such a way that it forms a circle. Finally, we
 -- have combinators that add symmetry to layers and other auxiliary
 -- functions.
 --
@@ -61,8 +61,8 @@ import Graphics.Identicon
 ----------------------------------------------------------------------------
 -- Filling
 
--- | Black is a special color, it means absence of light. We give this pixel
--- a name because it's used very frequently in layer coding.
+-- | Black is a special color; it means the absence of light. We give this
+-- pixel a name because it's used very frequently in layer coding.
 black :: PixelRGB8
 black = PixelRGB8 0 0 0
 
@@ -169,9 +169,9 @@ gradientXY f a b = Layer $ \w h x y ->
 -- of that range. With help of such functions you can change character of
 -- gradient transitions considerably.
 
--- | A built-in gradient transforming function. It maps continuous floating
--- value changing from 0 to 1 to value changing from 0 to 1 (in the middle)
--- and back to 0.
+-- | A built-in gradient transforming function. It maps a continuous
+-- floating value changing from 0 to 1 to a value changing from 0 to 1 (in
+-- the middle) and back to 0.
 mid :: Float -> Float
 mid x = 2 * (if x >= 0.5 then 1.0 - x else x)
 {-# INLINE mid #-}
@@ -184,13 +184,13 @@ edge x = x * x
 ----------------------------------------------------------------------------
 -- Position, size, and shape
 
--- | @onGrid w h n l@, given grid that has @w@ horizontal discrete positions
--- (of equal length) and @h@ vertical positions, it makes given layer @l@
--- occupy cell at index @n@. This approach allows you control position and
--- size at the same time.
+-- | @onGrid w h n l@, given a grid that has @w@ horizontal discrete
+-- positions (of equal length) and @h@ vertical positions, makes the given
+-- layer @l@ occupy the cell at index @n@. This approach allows you to
+-- control position and size at the same time.
 --
--- The index @n@ can be greater than maximal index, in this case reminder of
--- division of @n@ by @w * h@ is used.
+-- The index @n@ can be greater than the maximal index, in which case the
+-- remainder of division of @n@ by @w * h@ is used.
 onGrid ::
   (Integral a) =>
   -- | Number of horizontal positions
@@ -256,8 +256,8 @@ vsym l = Layer $ \w h x y ->
    in unLayer l w h' x (if y > h' then h - y else y)
 {-# INLINE vsym #-}
 
--- | Add horizontal and vertical symmetry to layer. Result is a layer with
--- four mirrored repetitions of the same figure.
+-- | Add horizontal and vertical symmetry to a layer. The result is a layer
+-- with four mirrored repetitions of the same figure.
 hvsym :: Layer -> Layer
 hvsym l = Layer $ \w h x y ->
   let h' = h `quot` 2

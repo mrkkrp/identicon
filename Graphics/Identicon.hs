@@ -44,7 +44,7 @@
 -- @myGenerator@ takes the desired width, height, and a hash that should
 -- have at least 4 bytes in it and returns an identicon corresponding to
 -- that hash or 'Nothing' if the hash has less than 4 bytes in it or when
--- width\/height don't make sense. The identicon has randomly placed circle
+-- width\/height don't make sense. The identicon has a randomly placed circle
 -- with gradient filling changing (horizontally) from black to some color
 -- and back to black. The circle is mirrored 4 times, and every repetition
 -- is rotated by 90°. This identicon consumes 4 bytes and has one layer.
@@ -90,16 +90,16 @@ data Identicon (n :: Nat) = Identicon
 -- type @n@ which is a natural number on the type level that represents the
 -- number of bytes that this entity consumes. At this moment, a 'Consumer'
 -- always adds one 'Layer' to an 'Identicon' when attached to it. The number
--- of bytes, specified as type parameter of 'Identicon' type must be
+-- of bytes, specified as the type parameter of the 'Identicon' type, must be
 -- completely consumed by a collection of consumers attached to it. To
--- attach a consumer to 'Identicon', you use the @(':+')@ type operator, see
--- below.
+-- attach a consumer to an 'Identicon', you use the @(':+')@ type operator,
+-- see below.
 data Consumer (n :: Nat)
 
 -- | The @(':+')@ type operator is used to attach 'Consumer's to
 -- 'Identicon', thus adding layers to it and exhausting the bytes that are
--- available for identicon generation. An example of identicon that can be
--- generated from 16 byte hash is shown below:
+-- available for identicon generation. An example of an identicon that can be
+-- generated from a 16-byte hash is shown below:
 --
 -- > type Icon = Identicon 16 :+ Consumer 5 :+ Consumer 5 :+ Consumer 6
 --
@@ -117,7 +117,7 @@ data a :+ b = a :+ b
 --     * Position on Y axis
 --
 -- …and returns a 'PixelRGB8' value. In this library, an identicon is
--- generated as a “superposition” of several 'Layers'.
+-- generated as a “superposition” of several 'Layer's.
 newtype Layer = Layer
   {unLayer :: Int -> Int -> Int -> Int -> PixelRGB8}
 
@@ -147,7 +147,7 @@ type family Implementation a where
   Implementation (Identicon n) = Identicon n
   Implementation (a :+ Consumer n) = Implementation a :+ ToLayer n
 
--- | The 'ToLayer' type function calculates type that a layer-producing
+-- | The 'ToLayer' type function calculates the type that a layer-producing
 -- function should have to consume the given number of bytes @n@.
 type family ToLayer (n :: Nat) where
   ToLayer 0 = Layer
@@ -184,7 +184,7 @@ instance
         (bs2, y) = applyBytes b bs1
      in (bs2, mixPixels x (unLayer y weight height))
 
--- | Combine results of two rending functions.
+-- | Combine results of two rendering functions.
 mixPixels ::
   (Int -> Int -> PixelRGB8) ->
   (Int -> Int -> PixelRGB8) ->
@@ -220,8 +220,8 @@ instance (ApplyBytes f) => ApplyBytes (Word8 -> f) where
     let (b, bs') = fromJust (B.uncons bs)
      in applyBytes (f b) bs'
 
--- | Render an identicon. The function returns 'Nothing' if given
--- 'ByteString' is too short or when width or height is lesser than 1.
+-- | Render an identicon. The function returns 'Nothing' if the given
+-- 'ByteString' is too short or when the width or height is less than 1.
 renderIdenticon ::
   forall a.
   ( Renderable a,
@@ -238,7 +238,7 @@ renderIdenticon ::
   Int ->
   -- | Collection of bytes to use, should be long enough
   ByteString ->
-  -- | Rendered identicon, or 'Nothing' if there is not enough bytes
+  -- | Rendered identicon, or 'Nothing' if there are not enough bytes
   Maybe (Image PixelRGB8)
 renderIdenticon proxy impl width height bs =
   if B.length bs < fromIntegral (natVal (Proxy :: Proxy (BytesAvailable a)))
